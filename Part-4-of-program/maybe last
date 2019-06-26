@@ -1,0 +1,98 @@
+#include <iostream>
+#include <fstream>
+#include <algorithm>
+#include <iomanip>
+#include <cstdlib>
+using namespace std;
+#define competitorNumber = 5;
+struct Competitors{
+    char Number[10];
+    char Name[10];
+    char Sex[10];
+    int Class;
+    char QQnumber[11];
+    float Avgscore;
+};
+struct Referees{
+    char Name[10];
+    float Score[5];
+};
+bool cmp1(int a, int b)
+{
+    return a>b;
+}
+int cmp2(const void *a,const void *b)
+{
+    struct Competitors *x = (struct Competitors*)a;
+    struct Competitors *y = (struct Competitors*)b;
+    return (x->Avgscore < y->Avgscore);
+}
+int main()
+{
+    int competitorNumber;
+    int score[7];
+    float sum = 0;
+    ifstream Competitor("/Users/s20181106115/Desktop/competitor.txt");
+    ifstream Referee("/Users/s20181106115/Desktop/referee.txt");
+    ofstream Result("/Users/s20181106115/Desktop/ops.txt");
+    
+    struct Competitors Competitors[competitorNumber];
+    struct Referees Referees[7];
+    
+    if(Referee.is_open())
+    {
+        cout << "Succeeded!" << endl;
+        for(int i = 0; i < 7; i++)
+        {
+            Referee >> Referees[i].Name;
+            for(int j = 0; j < competitorNumber; j++)
+            {
+                Referee >> Referees[i].Score[j];
+            }
+        }
+        for(int i = 0; i < competitorNumber; i++)
+        {
+            for(int j = 0; j < 7; j++)
+            {
+                score[j] = Referees[j].Score[i];
+            }
+            sort(score, score + 7, cmp1);
+            for(int k = 1; k < competitorNumber + 1; k++)
+            {
+                sum += score[k];
+            }
+            Competitors[i].Avgscore = sum / competitorNumber;
+            sum = 0;
+        }
+        Referee.close();
+    }
+    if(Competitor.is_open())
+    {
+        cout << "Also Succeeded!" << endl;
+        for(int i = 0; i < competitorNumber; i++)
+        {
+            Competitor >> Competitors[i].Number
+            >> Competitors[i].Name
+            >> Competitors[i].Sex
+            >> Competitors[i].Class
+            >> Competitors[i].QQnumber;
+        }
+        Competitor.close();
+    }
+    if(Result.is_open())
+    {
+        qsort(Competitors, competitorNumber, sizeof(Competitors[0]), cmp2);
+        for(int i = 0; i < competitorNumber; i++)
+        {
+            Result  << left << setw(5) << Competitors[i].Number << " "
+            << left << setw(8) << Competitors[i].Name <<" "
+            << left << setw(8) << Competitors[i].Sex <<" "
+            << left << setw(3) << Competitors[i].Class <<" "
+            << left << setw(13) << Competitors[i].QQnumber <<" "
+            << left << setw(8) << setprecision(2)<< fixed << Competitors[i].Avgscore <<" "
+            << endl;
+        }
+        Result.close();
+    }
+    return 0;
+}

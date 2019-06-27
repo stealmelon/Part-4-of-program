@@ -3,8 +3,10 @@
 #include <algorithm>
 #include <iomanip>
 #include <cstdlib>
+#include <stdio.h>
+#define Num 7
 using namespace std;
-#define competitorNumber = 5;
+
 struct Competitors{
     char Number[10];
     char Name[10];
@@ -15,7 +17,7 @@ struct Competitors{
 };
 struct Referees{
     char Name[10];
-    float Score[5];
+    float Score[Num];
 };
 bool cmp1(int a, int b)
 {
@@ -29,47 +31,46 @@ int cmp2(const void *a,const void *b)
 }
 int main()
 {
-    int competitorNumber;
     int score[7];
     float sum = 0;
-    ifstream Competitor("/Users/s20181106115/Desktop/competitor.txt");
-    ifstream Referee("/Users/s20181106115/Desktop/referee.txt");
-    ofstream Result("/Users/s20181106115/Desktop/ops.txt");
-    
-    struct Competitors Competitors[competitorNumber];
+    struct Competitors Competitors[Num];
     struct Referees Referees[7];
+    
+    ifstream Competitor("/Users/s20181106115/Desktop/Competitor.txt");
+    ifstream Referee("/Users/s20181106115/Desktop/Referee.txt");
+    ofstream Result("/Users/s20181106115/Desktop/Result.txt");
     
     if(Referee.is_open())
     {
-        cout << "Succeeded!" << endl;
+        //cout << "Succeeded!" << endl;
         for(int i = 0; i < 7; i++)
         {
             Referee >> Referees[i].Name;
-            for(int j = 0; j < competitorNumber; j++)
+            for(int j = 0; j < Num; j++)
             {
                 Referee >> Referees[i].Score[j];
             }
         }
-        for(int i = 0; i < competitorNumber; i++)
+        for(int i = 0; i < Num; i++)
         {
             for(int j = 0; j < 7; j++)
             {
                 score[j] = Referees[j].Score[i];
             }
             sort(score, score + 7, cmp1);
-            for(int k = 1; k < competitorNumber + 1; k++)
+            for(int k = 1; k < 6; k++)
             {
                 sum += score[k];
             }
-            Competitors[i].Avgscore = sum / competitorNumber;
+            Competitors[i].Avgscore = sum / Num;
             sum = 0;
         }
         Referee.close();
     }
     if(Competitor.is_open())
     {
-        cout << "Also Succeeded!" << endl;
-        for(int i = 0; i < competitorNumber; i++)
+        //cout << "Also Succeeded!" << endl;
+        for(int i = 0; i < Num; i++)"
         {
             Competitor >> Competitors[i].Number
             >> Competitors[i].Name
@@ -81,8 +82,8 @@ int main()
     }
     if(Result.is_open())
     {
-        qsort(Competitors, competitorNumber, sizeof(Competitors[0]), cmp2);
-        for(int i = 0; i < competitorNumber; i++)
+        qsort(Competitors, Num, sizeof(Competitors[0]), cmp2);
+        for(int i = 0; i < Num; i++)
         {
             Result  << left << setw(5) << Competitors[i].Number << " "
             << left << setw(8) << Competitors[i].Name <<" "
